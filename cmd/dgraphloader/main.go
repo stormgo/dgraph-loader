@@ -127,7 +127,11 @@ func processFile(file string, batch *client.BatchMutation) {
 			break
 		}
 		line++
-		nq, err := rdf.Parse(buf.String())
+		if line > 1000 {
+			return
+		}
+		// nq, err := rdf.Parse(buf.String())
+		_, err := rdf.Parse(buf.String())
 		if err == rdf.ErrEmpty { // special case: comment/empty line
 			buf.Reset()
 			continue
@@ -135,9 +139,11 @@ func processFile(file string, batch *client.BatchMutation) {
 			log.Fatalf("Error while parsing RDF: %v, on line:%v %v", err, line, buf.String())
 		}
 		buf.Reset()
-		if err = batch.AddMutation(nq, client.SET); err != nil {
-			log.Fatal("While adding mutation to batch: ", err)
-		}
+		/*
+			if err = batch.AddMutation(nq, client.SET); err != nil {
+				log.Fatal("While adding mutation to batch: ", err)
+			}
+		*/
 	}
 	if err != io.EOF {
 		x.Checkf(err, "Error while reading file")
