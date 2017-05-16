@@ -34,6 +34,7 @@ var (
 	dgraph     = flag.String("d", "127.0.0.1:8080", "Dgraph server address")
 	concurrent = flag.Int("c", 100, "Number of concurrent requests to make to Dgraph")
 	numRdf     = flag.Int("m", 1000, "Number of RDF N-Quads to send as part of a mutation.")
+	numoflines = flag.Int("l", 1000, "Number of lines to read from the rdf file")
 	// TLS configuration
 	tlsEnabled       = flag.Bool("tls.on", false, "Use TLS connections.")
 	tlsInsecure      = flag.Bool("tls.insecure", false, "Skip certificate validation (insecure)")
@@ -127,7 +128,7 @@ func processFile(file string, batch *client.BatchMutation) {
 			break
 		}
 		line++
-		if line > 1000 {
+		if line > *numoflines {
 			return
 		}
 		nq, err := rdf.Parse(buf.String())
